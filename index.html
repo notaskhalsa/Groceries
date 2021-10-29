@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet"> 
+    <title>Groceries</title>
+</head>
+<body>
+    <section class="section-center">
+        <form class="grocery-form">
+            <p class="alert"></p>
+            <h2 class="heading">Grocery bud</h2>
+            <div class="form-control">
+                <input type="text" id="grocery" placeholder=" e.g.eggs, milk">
+                <button type="submit" class="submit">submit</button>
+            </div>
+        </form>
+
+        <div class="grocery-container">
+            <div class="grocery-list">
+
+                <article class="grocery-item">
+                   
+                </article>
+
+            </div>
+            <div class="format">
+                <button type="button" class="clear-btn">clear all</button>
+            </div>
+        </div>
+    </section>
+
+    <script type="text/javascript">
+
+        const Alert = document.querySelector('.alert');
+        const form = document.querySelector('.grocery-form');
+        const grocery = document.getElementById("grocery");
+        const submitBtn = document.querySelector('.submit');
+        const container = document.querySelector('.grocery-container');
+        const list = document.querySelector('.grocery-list');
+        const clearBtn = document.querySelector('.clear-btn');
+
+        let editElement;
+        let editFlag = false;
+        let editId = "";
+        
+        form.addEventListener('submit', addItem);
+        clearBtn.addEventListener('click',clearItems);
+
+        function addItem(e) {
+            e.preventDefault();
+            const value = grocery.value;
+
+            const id= new Date().getTime().toString();
+            if(value && !editFlag){
+                
+                const element = document.createElement("article");
+                element.classList.add("grocery-item");
+
+                const attr = document.createAttribute("data-id");
+                attr.value = id;
+
+                element.setAttributeNode(attr);
+                element.innerHTML = ` <p class="item-title">${value}</p>
+                                        <div class="btn-container">
+                                            <button type="submit" class="edit-btn">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="submit" class="delete-btn">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>`;
+                list.appendChild(element);
+
+                displayAlert("item added to the list", "success");
+                container.style.visibility = "visible";
+
+                addToLocalStorage(id,value);
+                setBackToDefault();
+            }else if(value && editFlag){
+                console.log("editing");
+            }else{
+                displayAlert("value must not be empty", "danger");
+            }
+        };
+
+
+        function displayAlert(text, action){
+            Alert.innerHTML = text;
+            Alert.classList.add(`alert-${action}`)
+            
+            setTimeout(function(){
+                Alert.innerHTML = "";
+                Alert.classList.remove(`alert-${action}`)
+            },2000);
+        };
+
+
+        function clearItems(){
+            const items = document.querySelectorAll(".grocery-item");      
+            
+            if(items.length > 0){
+                items.forEach(function(item){
+                    list.removeChild(item);
+                });
+            }
+            
+            container.style.visibility = "hidden";
+            displayAlert("empty list", "danger");
+        }
+
+        //          Local storge  && Set back default
+
+        function setBackToDefault(){
+            grocery.value = "";
+            editFlag = false;
+            editId = "";
+            submitBtn.innerHTML = "submit";
+        }
+
+        function addToLocalStorage(id,value){
+
+        }
+
+
+
+    </script>
+</body>
+</html>
